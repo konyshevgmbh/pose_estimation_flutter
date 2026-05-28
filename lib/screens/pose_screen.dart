@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart' hide debugPrint;
 
-import '../utils/dlog.dart';
+import '../utils/dbg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -79,7 +79,7 @@ class _PoseScreenState extends State<PoseScreen> {
   }
 
   Future<void> _stepPermissions() async {
-    dlog('[INIT] → permissions');
+    dbg('[INIT] → permissions');
     _begin(0);
     final sw = Stopwatch()..start();
     if (!kIsWeb) await [Permission.camera].request();
@@ -91,11 +91,11 @@ class _PoseScreenState extends State<PoseScreen> {
     final sw = Stopwatch()..start();
     bool copyDone = false;
     try {
-      dlog('[INIT] → model load');
+      dbg('[INIT] → model load');
       await _detector.initialize(
         'assets/models/rtmpose.onnx',
         onProgress: (msg) {
-          dlog('[INIT]   $msg  (${sw.elapsedMilliseconds} ms)');
+          dbg('[INIT]   $msg  (${sw.elapsedMilliseconds} ms)');
           if (!copyDone && msg.contains('session')) {
             _finish(1, sw.elapsedMilliseconds);
             sw.reset();
@@ -111,14 +111,14 @@ class _PoseScreenState extends State<PoseScreen> {
       _finish(2, sw.elapsedMilliseconds);
       return true;
     } catch (e) {
-      dlog('[INIT] ✗ model: $e');
+      dbg('[INIT] ✗ model: $e');
       _fail(copyDone ? 2 : 1, e.toString().split('\n').first);
       return false;
     }
   }
 
   Future<void> _stepStartCamera() async {
-    dlog('[INIT] → camera');
+    dbg('[INIT] → camera');
     _begin(3);
     final sw = Stopwatch()..start();
     try {
@@ -128,11 +128,11 @@ class _PoseScreenState extends State<PoseScreen> {
       );
       _finish(3, sw.elapsedMilliseconds);
     } on CameraInUseException catch (e) {
-      dlog('[INIT] ✗ camera busy: $e');
+      dbg('[INIT] ✗ camera busy: $e');
       _fail(3, 'Camera busy — close other apps using the camera');
       _showRetrySnackbar();
     } catch (e) {
-      dlog('[INIT] ✗ camera: $e');
+      dbg('[INIT] ✗ camera: $e');
       _fail(3, e.toString().split('\n').first);
     }
   }
@@ -173,7 +173,7 @@ class _PoseScreenState extends State<PoseScreen> {
         });
       }
     }).catchError((e) {
-      dlog('[ORT] error: $e');
+      dbg('[ORT] error: $e');
     }).whenComplete(() {
       _inferring = false;
     });

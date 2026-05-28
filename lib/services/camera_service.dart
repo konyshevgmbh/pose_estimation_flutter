@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import '../utils/dlog.dart';
+import '../utils/dbg.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:image/image.dart' as img;
@@ -63,7 +63,7 @@ class CameraService {
 
     _renderer!.srcObject = _localStream;
     _isRunning = true;
-    dlog('[CAM] started  tracks=${_localStream!.getVideoTracks().length}');
+    dbg('[CAM] started  tracks=${_localStream!.getVideoTracks().length}');
 
     final interval = Duration(milliseconds: (1000 / targetFps).round());
     _frameTimer = Timer.periodic(interval, (_) => _captureFrame());
@@ -75,7 +75,7 @@ class CameraService {
     if (tracks == null || tracks.isEmpty) return;
 
     _capturing = true;
-    dlog('[CAM] captureFrame → calling...');
+    dbg('[CAM] captureFrame → calling...');
 
     Future.any([
       tracks.first.captureFrame(),
@@ -85,12 +85,12 @@ class CameraService {
     ]).then((byteBuffer) {
       if (!_isRunning || _onFrame == null) return;
       final bytes = Uint8List.view(byteBuffer);
-      dlog('[CAM] captureFrame ← ${bytes.length} bytes  first4=${bytes.take(4).toList()}');
+      dbg('[CAM] captureFrame ← ${bytes.length} bytes  first4=${bytes.take(4).toList()}');
       final frame = img.decodeImage(bytes);
-      dlog('[CAM] decodeImage → ${frame == null ? "null" : "${frame.width}x${frame.height} fmt=${frame.format}"}');
+      dbg('[CAM] decodeImage → ${frame == null ? "null" : "${frame.width}x${frame.height} fmt=${frame.format}"}');
       if (frame != null) _onFrame!(frame);
     }).catchError((e) {
-      dlog('[CAM] captureFrame error: $e');
+      dbg('[CAM] captureFrame error: $e');
     }).whenComplete(() {
       _capturing = false;
     });

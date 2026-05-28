@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-void dlog(String msg) {
+void dbg(String msg) {
   if (kDebugMode) debugPrint(msg);
 }
