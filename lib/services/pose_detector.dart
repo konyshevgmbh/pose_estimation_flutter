@@ -1,5 +1,6 @@
 import 'dart:math' as math;
-import 'package:flutter/foundation.dart';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'package:flutter_onnxruntime/flutter_onnxruntime.dart';
 import 'package:image/image.dart' as img;
 
@@ -27,7 +28,9 @@ class PoseDetector {
     );
 
     onProgress?.call('Copying model to cache…');
-    _session = await _ort.createSessionFromAsset(assetPath, options: options);
+    _session = kIsWeb
+        ? await _ort.createSession(assetPath, options: options)
+        : await _ort.createSessionFromAsset(assetPath, options: options);
 
     onProgress?.call('ONNX session ready');
     _isInitialized = true;
