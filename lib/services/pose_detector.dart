@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'dart:typed_data';
-import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb;
+
+import '../utils/dlog.dart';
 import 'package:flutter_onnxruntime/flutter_onnxruntime.dart';
 import 'package:image/image.dart' as img;
 
@@ -41,7 +43,7 @@ class PoseDetector {
     if (!_isInitialized || _session == null) return null;
 
     final t0 = DateTime.now().millisecondsSinceEpoch;
-    debugPrint('[ORT] detect() frame=${frame.width}x${frame.height}');
+    dlog('[ORT] detect() frame=${frame.width}x${frame.height}');
 
     // 1. Preprocess
     final floatData = _preprocess(frame);
@@ -151,7 +153,7 @@ class PoseDetector {
         final xMax = xSlice.reduce(math.max);
         final xMin = xSlice.reduce(math.min);
         final xSum = xSlice.fold(0.0, (a, b) => a + b);
-        debugPrint('[ORT] nose xSlice: max=$xMax  min=$xMin  sum=${xSum.toStringAsFixed(2)}  argmax=$xArgmax  softmaxMax=${_softmaxMax(xSlice).toStringAsFixed(5)}');
+        dlog('[ORT] nose xSlice: max=$xMax  min=$xMin  sum=${xSum.toStringAsFixed(2)}  argmax=$xArgmax  softmaxMax=${_softmaxMax(xSlice).toStringAsFixed(5)}');
       }
 
       keypoints.add(PoseKeypoint(
@@ -164,12 +166,12 @@ class PoseDetector {
     final maxConf = keypoints.isEmpty
         ? 0.0
         : keypoints.map((k) => k.confidence).reduce(math.max);
-    debugPrint('[ORT] keypoints=${keypoints.length}  maxConf=${maxConf.toStringAsFixed(3)}  '
+    dlog('[ORT] keypoints=${keypoints.length}  maxConf=${maxConf.toStringAsFixed(3)}  '
         'valid=${keypoints.where((k) => k.isValid).length}  ms=${inferenceMs.toStringAsFixed(0)}');
     // Head keypoints: 0=nose 1=leftEye 2=rightEye 3=leftEar 4=rightEar
     for (int i = 0; i < math.min(5, keypoints.length); i++) {
       final k = keypoints[i];
-      debugPrint('[ORT]   kp[$i] x=${k.x.toStringAsFixed(3)} y=${k.y.toStringAsFixed(3)} conf=${k.confidence.toStringAsFixed(3)}');
+      dlog('[ORT]   kp[$i] x=${k.x.toStringAsFixed(3)} y=${k.y.toStringAsFixed(3)} conf=${k.confidence.toStringAsFixed(3)}');
     }
 
     return PoseResult(keypoints: keypoints, inferenceMs: inferenceMs);
