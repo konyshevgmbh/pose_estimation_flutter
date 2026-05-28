@@ -19,7 +19,7 @@ class PoseScreen extends StatefulWidget {
   State<PoseScreen> createState() => _PoseScreenState();
 }
 
-class _PoseScreenState extends State<PoseScreen> {
+class _PoseScreenState extends State<PoseScreen> with WidgetsBindingObserver {
   final _camera = CameraService();
   final _detector = PoseDetector();
 
@@ -55,12 +55,27 @@ class _PoseScreenState extends State<PoseScreen> {
   @override
   void initState() {
     super.initState();
-    WakelockPlus.enable();
+    WidgetsBinding.instance.addObserver(this);
+    // Defer until the first frame so the page is visible before requesting WakeLock.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) WakelockPlus.enable();
+    });
     _init();
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      WakelockPlus.enable();
+    } else if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
+      WakelockPlus.disable();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     WakelockPlus.disable();
     _camera.stop();
     _detector.dispose();
