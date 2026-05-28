@@ -1,15 +1,27 @@
 # Pose Estimation
 
-Real-time pose detection from webcam video using [RTMPose](https://github.com/open-mmlab/mmpose/tree/main/projects/rtmpose) and [ONNX Runtime](https://onnxruntime.ai/), built with Flutter.
+Real-time pose detection from camera using [RTMPose](https://github.com/open-mmlab/mmpose/tree/main/projects/rtmpose) and [ONNX Runtime](https://onnxruntime.ai/), built with Flutter.
 
 **[Live demo on GitHub Pages](https://konyshevgmbh.github.io/pose_estimation_flutter/)**
+
+This project is also a practical example of **cross-platform camera access in Flutter** using [flutter_webrtc](https://pub.dev/packages/flutter_webrtc) — a single implementation that works on all six platforms without platform-specific code.
+
+## Platforms
+
+| Platform | Status |
+|----------|--------|
+| Android  | ✅ |
+| iOS      | ✅ |
+| Web      | ✅ |
+| Windows  | ✅ |
+| Linux    | ✅ |
+| macOS    | ✅ |
 
 ## Features
 
 - Real-time 17-keypoint body pose detection
 - Runs fully on-device via ONNX Runtime (no server required)
-- Webcam input via WebRTC
-- Works in the browser (Flutter Web) and on desktop (Windows, Linux, macOS)
+- Camera input via WebRTC — works on mobile, desktop, and browser
 - RTMPose-t model — lightweight and fast
 
 ## Screenshot
@@ -22,6 +34,9 @@ Real-time pose detection from webcam video using [RTMPose](https://github.com/op
 flutter pub get
 flutter run -d chrome          # web
 flutter run -d windows         # Windows desktop
+flutter run -d macos           # macOS desktop
+flutter run -d linux           # Linux desktop
+flutter run                    # Android or iOS (device/emulator)
 ```
 
 ### Prerequisites
