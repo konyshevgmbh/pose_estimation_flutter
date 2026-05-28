@@ -29,7 +29,7 @@ class PoseDetector {
 
     onProgress?.call('Copying model to cache…');
     _session = kIsWeb
-        ? await _ort.createSession(assetPath, options: options)
+        ? await _ort.createSession('assets/$assetPath', options: options)
         : await _ort.createSessionFromAsset(assetPath, options: options);
 
     onProgress?.call('ONNX session ready');
