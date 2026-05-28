@@ -69562,7 +69562,7 @@ var $async$tZ=A.L(function(c,d){if(c===1)return A.H(d,r)
 while(true)switch(s){case 0:b.$1("Reading asset\u2026")
 b.$1("Copying model to cache\u2026")
 s=2
-return A.P(q.b.td(a,new A.Xr(2,2)),$async$tZ)
+return A.P(q.b.td("assets/"+a,new A.Xr(2,2)),$async$tZ)
 case 2:q.c=d
 b.$1("ONNX session ready")
 q.d=!0
